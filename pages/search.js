@@ -1,8 +1,12 @@
-import React from 'react'
+import { useState } from 'react'
 import tw from 'tailwind-styled-components'
 import Link from 'next/link';
 
 const Search = () => {
+
+    const [pickup, setPickup ] = useState("");
+    const [dropoff, setDropoff ] = useState("");
+
     return (
         <Wrapper>
             <ButtonContainer>
@@ -17,8 +21,16 @@ const Search = () => {
                     <Square src='https://img.icons8.com/windows/50/000000/square-full.png'/>
                 </FrontToIcons>
                 <InputBoxes>
-                    <Input placeholder='Enter pickup location'/>
-                    <Input placeholder='Where to?'/>
+
+                    <Input placeholder='Enter pickup location'
+                    value={pickup}
+                    onChange={e => setPickup(e.target.value)}
+                    />
+                    
+                    <Input placeholder='Where to?' 
+                    value={dropoff}
+                    onChange={e => setDropoff(e.target.value)}
+                    />
                 </InputBoxes>
                 <PlusIcon src='https://img.icons8.com/ios/50/000000/plus-math.png'/>
             </InputContainer>
@@ -26,9 +38,17 @@ const Search = () => {
                     <StarIcon src='https://img.icons8.com/ios-filled/50/ffffff/star--v1.png'/>
                     Saved Places
                 </SavedPlaces>
-                <ConfirmLocation>
+                <Link href={{
+                    pathname: '/confirm',
+                    query: {
+                        pickup: pickup,
+                        dropoff: dropoff
+                    }
+                }}>
+                    <ConfirmLocation>
                     Confirm Location
-                </ConfirmLocation>
+                    </ConfirmLocation>
+                </Link>
             {/* { Button Container } */}
             {/* { Input Container } */}
             {/* { Saved Places } */}
@@ -47,7 +67,7 @@ bg-white px-4
 
 `
 const BackButton = tw.img`
-
+h-12 cursor-pointer
 `
 const InputContainer = tw.div`
 bg-white flex items-center px-4 mb-2
@@ -81,5 +101,5 @@ const StarIcon = tw.img`
 bg-gray-400 w-10 h-10 p-2 rounded-full mr-2
 `
 const ConfirmLocation = tw.div`
-flex items-center bg-black px-4 py-2 mr-4 ml-4 text-white mt-4 justify-center
+flex items-center bg-black px-4 py-3 mr-4 ml-4 text-xl cursor-pointer text-white mt-4 justify-center
 `
