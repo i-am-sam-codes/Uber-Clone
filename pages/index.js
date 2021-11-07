@@ -1,14 +1,32 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import tw from 'tailwind-styled-components'
 import Map from './components/map'
 import Link from 'next/link'
+import { auth } from '../firebase'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { useRouter } from 'next/router'
 
 
 export default function Home() {
 
+  const [user, setUser] = useState(null)
+  const router = useRouter()
 
+  useEffect(() => {
+    return onAuthStateChanged(auth, user => {
+      if (user) {
+        setUser({
+          name: user.displayName,
+          photoUrl: user.photoURL,
+        })
+      } else {
+        setUser(null)
+        router.push('/login')
+      }
+    })
+  }, [])
   return (
     <Wrapper>
       <Map />
@@ -17,9 +35,10 @@ export default function Home() {
       <Header>
         <UberLogo src="https://i.ibb.co/84stgjq/uber-technologies-new-20218114.jpg"/>
         <Profile>
-          <Name>Sam Ceja</Name>
+          <Name>{user && user.name}</Name>
           <UserImage
-            src='https://i.imgur.com/2HuswLA.jpg'/>
+            src={user && user.photoUrl}
+            onClick={() => signOut(auth)}/>
         </Profile>
       </Header>
       <ActionButtons>
@@ -50,7 +69,7 @@ export default function Home() {
 }
 
 const Wrapper = tw.div`
-  flex flex-col h-screen
+  flex flex-col  h-screen
 `
 
 const ActionItems = tw.div`
@@ -58,21 +77,21 @@ const ActionItems = tw.div`
 `
 
 const Header = tw.div`
-flex justify-between items-center
+  flex justify-between items-center
 `
 
 const UberLogo = tw.img`
-h-28
+  h-28
 
 `
 const Profile = tw.div`
-flex items-center 
+  flex items-center
 `
 const Name = tw.div`
-mr-4 w-20
+  mr-4 w-20 text-sm
 `
 const UserImage = tw.img`
-h-12 w-12 rounded-full border border-grey-200 p-px
+  h-12 w-12 rounded-full border border-gray-200 p-px object-cover cursor-pointer
 `
 
 const ActionButtons = tw.div`
